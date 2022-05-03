@@ -1,9 +1,12 @@
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { Component } from 'react';
 
 export default class FantasyCalendar extends Component {
+    //I recognize this won't generate a perfect calendar that accounts for different days in months, and leap years, but I built it for what i needed first and figured i'd evolve as i go
+
     data = {
         configuration: {
             months: ['Hammer', 'Alturiak', 'Ches', 'Tarsakh', 'Mirtul', 'Kythorn', 'Flamerule', 'Eleasis', 'Eleint', 'Marpenoth', 'Uktar', 'Nightal']
@@ -12,60 +15,85 @@ export default class FantasyCalendar extends Component {
             , weeksInMonth: 3
             , currentEra: 'ER'
             , startingYear: 2000
-            , startingDay: 1
-        },
-        currentDay: 51
+            , calendarStartDay: 1
+        }
     }
 
     monthsInYear = this.data.configuration.months.length;        
-    daysInYear = this.data.configuration.daysInWeek * this.monthsInYear;
+    daysInYear = this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth * this.monthsInYear;
 
+    constructor(props) {
+        super(props);
 
-    render() {        
+        this.state = {
+            currentDay: 200
+        }
+        this.previous = this.previous.bind(this);
+        this.next = this.next.bind(this);
+    }
+
+    render() {            
         let currentYear = this.calculateCurrentYear(this.daysInYear) + this.data.configuration.startingYear;
-        let currentMonth = this.calculateCurrentMonth(this.daysInYear);        
+        let currentDaysInYear = this.calculateCurrentDayInYear(this.daysInYear);
+        let currentMonth = this.calculateCurrentMonth(currentDaysInYear);        
         //TODO: Generate name days, if there are any
         return <Container fluid>
-            {this.generateHeader(currentMonth, currentYear)}
-            {this.generateDays(currentMonth)}
+            {this.renderHeader(currentMonth, currentYear)}
+            {this.renderDays(currentMonth, currentDaysInYear)}
         </Container>
     }
 
     calculateCurrentYear(daysInYear) {        
-        return parseInt(this.data.currentDay / daysInYear);
+        return parseInt(this.state.currentDay / daysInYear);
     }
 
-    calculateCurrentMonth(daysInYear) {
-        //TODO: when days in a month get more complicated, this needs updated
-        let days = this.data.currentDay < daysInYear ? this.data.currentDay : this.data.currentDay - daysInYear;
+    calculateCurrentDayInYear(daysInYear) {
+        let days = this.state.currentDay < daysInYear ? this.state.currentDay : this.state.currentDay - daysInYear;
+        return days;
+    }
+
+    calculateCurrentMonth(days) {
+        //TODO: when days in a month get more complicated, this needs updated        
         let currentMonth = days / (this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth);
         return parseInt(currentMonth);
     }
 
-    generateHeader(currentMonth, currentYear) {
+    previous() {
+        this.setState({currentDay: this.state.currentDay-1});
+    }
+
+    next() {        
+        this.setState({currentDay: this.state.currentDay+1});
+    }
+
+    renderHeader(currentMonth, currentYear) {
         return <Row>
-            <Col>
+            <Col><Button onClick={this.previous}>Previous</Button></Col>
+            <Col xs="8">
                 <h3>{this.data.configuration.months[currentMonth]} {currentYear} {this.data.configuration.currentEra}</h3>
             </Col>
+            <Col><Button onClick={this.next}>Next</Button></Col>
         </Row>
     }
 
-    generateDays(currentMonth) {
+    renderDays(currentMonth, currentDaysInYear) {
         let startingDay = 1;
-        let weeks = [];
+        let currentDay = currentDaysInYear - currentMonth * this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth;
+        let weeks = [];        
         for (let i = 0; i < this.data.configuration.weeksInMonth; i++) {            
-            weeks.push(this.generateWeek(i, startingDay));
+            weeks.push(this.renderWeek(i, startingDay, currentDay));
             startingDay += this.data.configuration.daysInWeek;
         }
         
         return weeks;
     }
 
-    generateWeek(weekKey, startOfWeekNumber) {
+    renderWeek(weekKey, startOfWeekNumber, currentDay) {
         let week = [];
 
         for (let i = 0; i < this.data.configuration.daysInWeek; i++) {            
-            week.push(<Col key={`Day${startOfWeekNumber}`}>{startOfWeekNumber}</Col>)
+            let className = currentDay === startOfWeekNumber ? 'current-day' : 'calendar-day';            
+            week.push(<Col className={className} key={`Day${startOfWeekNumber}`}>{startOfWeekNumber}</Col>)
             startOfWeekNumber++;
         }
 
@@ -74,8 +102,3 @@ export default class FantasyCalendar extends Component {
         </Row>
     }
 }
-
-//calculate current month, based on the current day.
-//generate current month calendar
-//highlight current day
-//display year readout
