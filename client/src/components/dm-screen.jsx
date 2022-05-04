@@ -17,10 +17,10 @@ export default class DMScreen extends Component {
     render() {
         return <Container fluid>
             <Row>
-            <Col><FantasyClock addDay={this.addDay} /></Col>
+            <Col xs="3"><FantasyClock addDay={this.addDay} /></Col>
             <Col><FantasyCalendar ref={this.fantasyCalendarRef} /></Col>
             </Row>        
-      </Container>      
+        </Container>      
     }
 
     addDay() {

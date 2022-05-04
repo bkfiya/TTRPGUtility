@@ -3,9 +3,11 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Component } from 'react';
+import WeatherService from '../services/weather-service';
 
 export default class FantasyCalendar extends Component {
     //I recognize this won't generate a perfect calendar that accounts for different days in months, and leap years, but I built it for what i needed first and figured i'd evolve as i go
+    weatherService = new WeatherService();
 
     data = {
         configuration: {
@@ -93,7 +95,12 @@ export default class FantasyCalendar extends Component {
 
         for (let i = 0; i < this.data.configuration.daysInWeek; i++) {            
             let className = currentDay === startOfWeekNumber ? 'current-day' : 'calendar-day';            
-            week.push(<Col className={className} key={`Day${startOfWeekNumber}`}>{startOfWeekNumber}</Col>)
+            week.push(<Col className={className} key={`Day${startOfWeekNumber}`}>
+                <h6 className={"bold"}>{startOfWeekNumber}</h6>
+                <label>Temp: {this.weatherService.generateTemperature()}</label>
+                <label>Wind: {this.weatherService.generateWind()}</label>
+                <label>Preci: {this.weatherService.generatePrecipitation()}</label>
+            </Col>)
             startOfWeekNumber++;
         }
 
