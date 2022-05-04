@@ -1,5 +1,9 @@
 export default class ClockService {
 
+    constructor(addDay) {
+        this.addDay = addDay;
+    }
+
     formatTime(time) {
         let fixedTime = time.toFixed(2);
         let splitTime = fixedTime.split(".");
@@ -16,7 +20,7 @@ export default class ClockService {
         }
         while (time >= 24) {
             time -= 24;
-            //updateCalendar
+            this.addDay();
         }        
         return time;
     }

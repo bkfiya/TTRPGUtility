@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
 
 export default class FantasyClock extends Component {
-    clockService = new ClockService();
+    clockService;
 
     constructor(props) {
         super(props);
@@ -18,6 +18,8 @@ export default class FantasyClock extends Component {
             , setTime: ''
         }
 
+        this.addDay = props.addDay;
+        this.clockService = new ClockService(props.addDay);
         this.addTime = this.addTime.bind(this);
         this.nextDay = this.nextDay.bind(this);
         this.setCustomTime = this.setCustomTime.bind(this);
@@ -63,7 +65,7 @@ export default class FantasyClock extends Component {
     }
 
     nextDay() {
-        //update calendar for next day
+        this.addDay();
         this.setState({currentTime: 8});
     }
 
@@ -81,5 +83,3 @@ export default class FantasyClock extends Component {
         });
     }
 }
-
-//if it goes past 24 hours, tell calendar to move forward a day.
