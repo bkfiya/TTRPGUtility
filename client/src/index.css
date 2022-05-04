@@ -19,3 +19,7 @@ code {
 .current-day {
   border: 1px solid red;
 }
+
+.width100 {
+  width: 100%;
+}
