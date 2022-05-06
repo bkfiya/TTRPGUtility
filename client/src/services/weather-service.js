@@ -38,4 +38,24 @@ export default class WeatherService {
         }
     }
 
+    generateMonth(weeksInMonth, daysInWeek) {
+        let monthWeather = [];
+
+        for (let i = 0; i < weeksInMonth; i++) {
+            let weekWeather = [];
+
+            for (let i2 = 0; i2 < daysInWeek; i2++) {
+                weekWeather.push({
+                    wind: this.generateWind(),
+                    precipitation: this.generatePrecipitation(),
+                    temperature: this.generateTemperature(),
+                });
+            }
+
+            monthWeather.push(weekWeather);
+        }
+
+        return monthWeather;
+    }
+
 }

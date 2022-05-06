@@ -18,7 +18,8 @@ export default class FantasyCalendar extends Component {
             , currentEra: 'ER'
             , startingYear: 2000
             , calendarStartDay: 1
-        }
+        },
+        weather: []
     }
 
     monthsInYear = this.data.configuration.months.length;        
@@ -28,16 +29,21 @@ export default class FantasyCalendar extends Component {
         super(props);
 
         this.state = {
-            currentDay: 200
+            currentDay: 200            
         }
         this.previous = this.previous.bind(this);
         this.next = this.next.bind(this);
+        this.lastMonth = -1;
     }
 
     render() {            
         let currentYear = this.calculateCurrentYear(this.daysInYear) + this.data.configuration.startingYear;
         let currentDaysInYear = this.calculateCurrentDayInYear(this.daysInYear);
         let currentMonth = this.calculateCurrentMonth(currentDaysInYear);        
+        if (this.lastMonth !== currentMonth) {
+            this.data.weather = this.weatherService.generateMonth(this.data.configuration.weeksInMonth, this.data.configuration.daysInWeek);
+            this.lastMonth = currentMonth;
+        }
         //TODO: Generate name days, if there are any
         return <Container fluid>
             {this.renderHeader(currentMonth, currentYear)}
@@ -57,6 +63,8 @@ export default class FantasyCalendar extends Component {
     calculateCurrentMonth(days) {
         //TODO: when days in a month get more complicated, this needs updated        
         let currentMonth = days / (this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth);
+        let remainder = days % (this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth);
+        if (remainder === 0) currentMonth -= 1; //When the math is equal, that means it's not actually the next month
         return parseInt(currentMonth);
     }
 
@@ -97,9 +105,9 @@ export default class FantasyCalendar extends Component {
             let className = currentDay === startOfWeekNumber ? 'current-day' : 'calendar-day';            
             week.push(<Col className={className} key={`Day${startOfWeekNumber}`}>
                 <h6 className={"bold"}>{startOfWeekNumber}</h6>
-                <label>Temp: {this.weatherService.generateTemperature()}</label>
-                <label>Wind: {this.weatherService.generateWind()}</label>
-                <label>Preci: {this.weatherService.generatePrecipitation()}</label>
+                <label>Temp: {this.data.weather[weekKey][i].temperature}</label>
+                <label>Wind: {this.data.weather[weekKey][i].wind}</label>
+                <label>Preci: {this.data.weather[weekKey][i].precipitation}</label>
             </Col>)
             startOfWeekNumber++;
         }
