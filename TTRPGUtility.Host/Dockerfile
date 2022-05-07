@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["TTRPGUtility.Host.csproj", "."]
-RUN dotnet restore "./TTRPGUtility.Host.csproj"
+RUN dotnet restore "TTRPGUtility.Host.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "TTRPGUtility.Host.csproj" -c Release -o /app/build
