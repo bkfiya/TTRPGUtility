@@ -72,7 +72,17 @@ export default class ConfigInit extends Component {
             return;
         }
 
-        this.setData(months, Number(this.state.weeksInMonth), Number(this.state.startingYear), this.state.currentEra, Number(this.state.adventureStartDay));
+        let configuration = {
+            months: months
+            , daysInWeek: 10 //TODO: allow this to be an array instead
+            , names: [] //TODO: this is names of days
+            , weeksInMonth: Number(this.state.weeksInMonth)
+            , currentEra: this.state.currentEra
+            , startingYear: Number(this.state.startingYear)
+            , calendarStartDay: Number(this.state.adventureStartDay)
+        };
+
+        this.setData(configuration);
     }
 
 }

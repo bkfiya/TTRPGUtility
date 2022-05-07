@@ -45,16 +45,7 @@ export default class DMScreen extends Component {
         this.fantasyCalendarRef.current.next();
     }
 
-    setData(months, weeksInMonths, startingYear, currentEra, adventureStartDay) {
-        let configuration = {
-            months: months
-            , daysInWeek: 10 //TODO: allow this to be an array instead
-            , names: [] //TODO: this is names of days
-            , weeksInMonth: weeksInMonths
-            , currentEra: currentEra
-            , startingYear: startingYear
-            , calendarStartDay: adventureStartDay
-        };
+    setData(configuration) {        
         this.setState({configuration});
     }
 }
