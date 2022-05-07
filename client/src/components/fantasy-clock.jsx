@@ -5,15 +5,19 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
+import StorageService from '../services/storage-service';
 
 export default class FantasyClock extends Component {
-    clockService;    
+    clockService;  
+    storageService = new StorageService();  
 
     constructor(props) {
         super(props);
 
+        let currentTime = this.storageService.loadKey("currentTime");
+
         this.state = {
-            currentTime: 8.15
+            currentTime: !currentTime ? 8.0 : currentTime
             , customTimeAdd: ''
             , setTime: ''
         }
@@ -66,11 +70,13 @@ export default class FantasyClock extends Component {
         time += this.state.currentTime;
         time = Number(time.toFixed(2));
         time = this.clockService.processTime(time);
+        this.storageService.storeValue("currentTime", time);
         this.setState({currentTime: time});
     }
 
     nextDay() {
         this.addDay();
+        this.storageService.storeValue("currentTime", 8);
         this.setState({currentTime: 8});
     }
 
@@ -79,9 +85,11 @@ export default class FantasyClock extends Component {
             toast("Please enter a valid decimal");
             return;
         }
+        let time = Number(this.state.setTime);
+        this.storageService.storeValue("currentTime", time);
         this.setState({
             setTime: ''
-            , currentTime: Number(this.state.setTime)
+            , currentTime: time
         });
     }
 

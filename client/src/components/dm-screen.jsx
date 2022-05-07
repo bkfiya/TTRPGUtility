@@ -5,14 +5,18 @@ import ConfigInit from './config-init';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import StorageService from '../services/storage-service';
 
 export default class DMScreen extends Component {     
+    storageService = new StorageService();
 
     constructor(props) {
         super(props);
 
+        let configuration = this.storageService.loadKey("configuration");
+
         this.state = {
-            configuration: null
+            configuration: configuration
         }
 
         this.fantasyCalendarRef = React.createRef();
@@ -45,7 +49,8 @@ export default class DMScreen extends Component {
         this.fantasyCalendarRef.current.next();
     }
 
-    setData(configuration) {        
+    setData(configuration) {     
+        this.storageService.storeValue("configuration", configuration);
         this.setState({configuration});
     }
 }

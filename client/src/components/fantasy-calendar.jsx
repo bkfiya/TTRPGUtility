@@ -4,11 +4,13 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Component } from 'react';
 import WeatherService from '../services/weather-service';
+import StorageService from '../services/storage-service';
 
 export default class FantasyCalendar extends Component {
     //I recognize this won't generate a perfect calendar that accounts for different days in months, and leap years, but I built it for what i needed first and figured i'd evolve as i go
     weatherService = new WeatherService();    
     weather = [];            
+    storageService = new StorageService();
 
     constructor(props) {
         super(props);
@@ -18,7 +20,7 @@ export default class FantasyCalendar extends Component {
         this.daysInYear = this.configuration.daysInWeek * this.configuration.weeksInMonth * this.monthsInYear;        
 
         this.state = {
-            currentDay: props.configuration.calendarStartDay            
+            currentDay: !props.configuration.currentDay ? props.configuration.calendarStartDay : props.configuration.currentDay
         }
         this.previous = this.previous.bind(this);
         this.next = this.next.bind(this);
@@ -58,10 +60,14 @@ export default class FantasyCalendar extends Component {
     }
 
     previous() {
+        this.configuration.currentDay = this.state.currentDay-1;
+        this.storageService.storeValue("configuration", this.configuration);
         this.setState({currentDay: this.state.currentDay-1});
     }
 
     next() {        
+        this.configuration.currentDay = this.state.currentDay+1;
+        this.storageService.storeValue("configuration", this.configuration);
         this.setState({currentDay: this.state.currentDay+1});
     }
 
