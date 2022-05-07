@@ -7,29 +7,18 @@ import WeatherService from '../services/weather-service';
 
 export default class FantasyCalendar extends Component {
     //I recognize this won't generate a perfect calendar that accounts for different days in months, and leap years, but I built it for what i needed first and figured i'd evolve as i go
-    weatherService = new WeatherService();
-
-    data = {
-        configuration: {
-            months: ['Hammer', 'Alturiak', 'Ches', 'Tarsakh', 'Mirtul', 'Kythorn', 'Flamerule', 'Eleasis', 'Eleint', 'Marpenoth', 'Uktar', 'Nightal']
-            , daysInWeek: 10 //TODO: allow this to be an array instead
-            , names: []
-            , weeksInMonth: 3
-            , currentEra: 'ER'
-            , startingYear: 2000
-            , calendarStartDay: 1
-        },
-        weather: []
-    }
-
-    monthsInYear = this.data.configuration.months.length;        
-    daysInYear = this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth * this.monthsInYear;
+    weatherService = new WeatherService();    
+    weather = [];            
 
     constructor(props) {
         super(props);
 
+        this.configuration = props.configuration;
+        this.monthsInYear = this.configuration.months.length;        
+        this.daysInYear = this.configuration.daysInWeek * this.configuration.weeksInMonth * this.monthsInYear;        
+
         this.state = {
-            currentDay: 200            
+            currentDay: props.configuration.calendarStartDay            
         }
         this.previous = this.previous.bind(this);
         this.next = this.next.bind(this);
@@ -37,11 +26,11 @@ export default class FantasyCalendar extends Component {
     }
 
     render() {            
-        let currentYear = this.calculateCurrentYear(this.daysInYear) + this.data.configuration.startingYear;
+        let currentYear = this.calculateCurrentYear(this.daysInYear) + this.configuration.startingYear;
         let currentDaysInYear = this.calculateCurrentDayInYear(this.daysInYear);
         let currentMonth = this.calculateCurrentMonth(currentDaysInYear);        
         if (this.lastMonth !== currentMonth) {
-            this.data.weather = this.weatherService.generateMonth(this.data.configuration.weeksInMonth, this.data.configuration.daysInWeek);
+            this.weather = this.weatherService.generateMonth(this.configuration.weeksInMonth, this.configuration.daysInWeek);
             this.lastMonth = currentMonth;
         }
         //TODO: Generate name days, if there are any
@@ -62,8 +51,8 @@ export default class FantasyCalendar extends Component {
 
     calculateCurrentMonth(days) {
         //TODO: when days in a month get more complicated, this needs updated        
-        let currentMonth = days / (this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth);
-        let remainder = days % (this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth);
+        let currentMonth = days / (this.configuration.daysInWeek * this.configuration.weeksInMonth);
+        let remainder = days % (this.configuration.daysInWeek * this.configuration.weeksInMonth);
         if (remainder === 0) currentMonth -= 1; //When the math is equal, that means it's not actually the next month
         return parseInt(currentMonth);
     }
@@ -80,7 +69,7 @@ export default class FantasyCalendar extends Component {
         return <Row>
             <Col><Button onClick={this.previous}>Previous</Button></Col>
             <Col xs="8">
-                <h3>{this.data.configuration.months[currentMonth]} {currentYear} {this.data.configuration.currentEra}</h3>
+                <h3>{this.configuration.months[currentMonth]} {currentYear} {this.configuration.currentEra}</h3>
             </Col>
             <Col><Button onClick={this.next}>Next</Button></Col>
         </Row>
@@ -88,11 +77,11 @@ export default class FantasyCalendar extends Component {
 
     renderDays(currentMonth, currentDaysInYear) {
         let startingDay = 1;
-        let currentDay = currentDaysInYear - currentMonth * this.data.configuration.daysInWeek * this.data.configuration.weeksInMonth;
+        let currentDay = currentDaysInYear - currentMonth * this.configuration.daysInWeek * this.configuration.weeksInMonth;
         let weeks = [];        
-        for (let i = 0; i < this.data.configuration.weeksInMonth; i++) {            
+        for (let i = 0; i < this.configuration.weeksInMonth; i++) {            
             weeks.push(this.renderWeek(i, startingDay, currentDay));
-            startingDay += this.data.configuration.daysInWeek;
+            startingDay += this.configuration.daysInWeek;
         }
         
         return weeks;
@@ -101,13 +90,13 @@ export default class FantasyCalendar extends Component {
     renderWeek(weekKey, startOfWeekNumber, currentDay) {
         let week = [];
 
-        for (let i = 0; i < this.data.configuration.daysInWeek; i++) {            
+        for (let i = 0; i < this.configuration.daysInWeek; i++) {            
             let className = currentDay === startOfWeekNumber ? 'current-day' : 'calendar-day';            
             week.push(<Col className={className} key={`Day${startOfWeekNumber}`}>
                 <h6 className={"bold"}>{startOfWeekNumber}</h6>
-                <label>Temp: {this.data.weather[weekKey][i].temperature}</label>
-                <label>Wind: {this.data.weather[weekKey][i].wind}</label>
-                <label>Preci: {this.data.weather[weekKey][i].precipitation}</label>
+                <label>Temp: {this.weather[weekKey][i].temperature}</label>
+                <label>Wind: {this.weather[weekKey][i].wind}</label>
+                <label>Preci: {this.weather[weekKey][i].precipitation}</label>
             </Col>)
             startOfWeekNumber++;
         }

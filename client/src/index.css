@@ -21,5 +21,21 @@ code {
 }
 
 .width100 {
-  width: 100%;
+  width: 95%;
+}
+
+.bottom-pad {
+  padding-bottom: 1rem;
+}
+
+.top-pad {
+  padding-top: 1rem;
+}
+
+.blue {
+  color: blue;
+}
+
+.red {
+  color: red;
 }

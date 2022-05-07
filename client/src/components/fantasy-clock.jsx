@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
 
 export default class FantasyClock extends Component {
-    clockService;
+    clockService;    
 
     constructor(props) {
         super(props);
@@ -29,31 +29,31 @@ export default class FantasyClock extends Component {
     render() {
         return <div>
             <h1>{this.clockService.formatTime(this.state.currentTime)}</h1>
-            <Stack>
-                <Button onClick={() => {this.addTime(0.10)}}>Add 10 minutes</Button>
-                <Button onClick={() => {this.addTime(0.15)}}>Add 15 minutes</Button>
-                <Button onClick={() => {this.addTime(1)}}>Add 1 Hour</Button>
-                <Button onClick={() => {this.addTime(8)}}>Add 8 Hours</Button>
-                <Button onClick={this.nextDay}>Next day at 8 AM</Button>
-                <Container fluid>
-                    <Row>
-                        <Col><input type="text" 
-                            value={this.state.customTimeAdd} 
-                            onChange={(e) => {this.setState({customTimeAdd: e.target.value})}}
-                            placeholder="Add Time (ex: 1.15)">
-                        </input></Col>
-                        <Col><Button onClick={this.addCustomTime} className={"width100"}>Add Custom Time</Button></Col>
-                    </Row>
-                    <Row>
-                        <Col><input type="text" 
-                            value={this.state.setTime} 
-                            onChange={(e) => {this.setState({setTime: e.target.value})}}
-                            placeholder="Set Time (ex: 8.15)">
-                        </input></Col>
-                        <Col><Button onClick={this.setCustomTime} className={"width100"}>Set Custom Time</Button></Col>
-                    </Row>                    
-                </Container>
-            </Stack>
+            <Container fluid>
+                <Row className="bottom-pad">
+                    <Col><Button onClick={() => {this.addTime(0.10)}}>+10m</Button></Col>
+                    <Col><Button onClick={() => {this.addTime(0.15)}}>+15m</Button></Col>
+                    <Col><Button onClick={() => {this.addTime(1)}}>+1h</Button></Col>
+                    <Col><Button onClick={() => {this.addTime(8)}}>+8h</Button></Col>
+                    <Col><Button onClick={this.nextDay}>ND</Button></Col>
+                </Row>                
+                <Row className="bottom-pad">
+                    <Col><input type="number" 
+                        value={this.state.customTimeAdd} 
+                        onChange={(e) => {this.setState({customTimeAdd: e.target.value})}}
+                        placeholder="Add Time (ex: 1.15)">
+                    </input></Col>
+                    <Col><Button onClick={this.addCustomTime} className={"width100"}>Add Custom Time</Button></Col>
+                </Row>
+                <Row className="bottom-pad">
+                    <Col><input type="number" 
+                        value={this.state.setTime} 
+                        onChange={(e) => {this.setState({setTime: e.target.value})}}
+                        placeholder="Set Time (ex: 8.15)">
+                    </input></Col>
+                    <Col><Button onClick={this.setCustomTime} className={"width100"}>Set Custom Time</Button></Col>
+                </Row>                    
+            </Container>
         </div>
     }
 
