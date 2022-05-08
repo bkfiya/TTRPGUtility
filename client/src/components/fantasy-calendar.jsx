@@ -32,8 +32,7 @@ export default class FantasyCalendar extends Component {
         let currentDaysInYear = this.calculateCurrentDayInYear(this.daysInYear);
         let currentMonth = this.calculateCurrentMonth(currentDaysInYear);        
         if (this.lastMonth !== currentMonth) {
-            this.weather = this.weatherService.generateMonth(this.configuration.weeksInMonth, this.configuration.daysInWeek);
-            this.lastMonth = currentMonth;
+            this.loadWeather(this.lastMonth, currentMonth);            
         }
         //TODO: Generate name days, if there are any
         return <Container fluid>
@@ -110,5 +109,21 @@ export default class FantasyCalendar extends Component {
         return <Row key={`Week${weekKey}`}>
             {week}
         </Row>
+    }
+
+    loadWeather(lastMonth, currentMonth) {
+        if (lastMonth === -1) {
+            let weather = this.storageService.loadKey("weather");
+            if (weather) {
+                this.weather = weather;                            
+            }            
+        } 
+        
+        if (this.weather.length === 0) {
+            this.weather = this.weatherService.generateMonth(this.configuration.weeksInMonth, this.configuration.daysInWeek);
+            this.storageService.storeValue("weather", this.weather);
+        }
+                
+        this.lastMonth = currentMonth;
     }
 }
