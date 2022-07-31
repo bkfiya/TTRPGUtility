@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import StorageService from '../services/storage-service';
 
-export default class DMScreen extends Component {     
+export default class TimeScreen extends Component {     
     storageService = new StorageService();
 
     constructor(props) {
