@@ -58,7 +58,6 @@ export default class DiceInput extends Component {
             }
             
             total += value;
-            log += `${appender}${value}`;
             appender = ",";
         }
 

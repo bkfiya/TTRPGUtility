@@ -95,6 +95,7 @@ export default class DiceRoller extends Component {
             , appender: ''
         }
         let rerollValues = this.state.rerollValues.split(",");
+        for (let i = 0; i < rerollValues; i++) rerollValues[i] = Number(rerollValues[i]);
         let additionalValue = isNaN(this.state.additionalValue) ? 0 : Number(this.state.additionalValue);
 
         let d4Roll = this.d4Ref.current.roll(rerollValues);
