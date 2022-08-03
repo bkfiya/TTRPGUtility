@@ -27,7 +27,15 @@ export default class DiceInput extends Component {
     }
 
     clear() {
-        this.setState({numDice: ''});
+        this.setValue("");
+    }
+
+    getValue() {
+        return this.state.numDice;
+    }
+
+    setValue(value) {
+        this.setState({numDice: value});
     }
 
     roll(rerollValues) {
@@ -42,8 +50,12 @@ export default class DiceInput extends Component {
 
         for (var i = 0; i < numDice; i++) {
             let value = this.diceService.rollDie(this.maxValue);
-            if (rerollValues.indexOf(value) > -1)
+            if (rerollValues.indexOf(value) > -1) {
                 value = this.diceService.rollDie(this.maxValue);
+                log += `${appender}${value}R`;
+            } else {
+                log += `${appender}${value}`;
+            }
             
             total += value;
             log += `${appender}${value}`;

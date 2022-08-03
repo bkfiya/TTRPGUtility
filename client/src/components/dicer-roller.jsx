@@ -4,7 +4,10 @@ import Col from 'react-bootstrap/Col';
 import React, { Component } from 'react';
 import DiceInput from './dice-input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLocationArrow, faBroom } from '@fortawesome/free-solid-svg-icons'
+import DiceHistory from './dice-history';
+import { toast } from 'react-toastify';
+import DicePools from './dice-pools';
+import Button from 'react-bootstrap/Button';
 
 export default class DiceRoller extends Component {
 
@@ -17,45 +20,71 @@ export default class DiceRoller extends Component {
         this.d10Ref = React.createRef();
         this.d12Ref = React.createRef();
         this.d20Ref = React.createRef();
+        this.diceHistory = React.createRef();
+        this.dicePools = React.createRef();
 
         this.state = {
             additionalValue: 0,
             name: "",
-            rerollValues: ""
+            rerollValues: "",        
         }
 
         this.roll = this.roll.bind(this);
         this.clearValues = this.clearValues.bind(this);
+        this.save = this.save.bind(this);
+        this.loadPool = this.loadPool.bind(this);
     }
 
     render() {
         return <Container fluid>
-            <DiceInput ref={this.d4Ref} die="4"></DiceInput>
-            <DiceInput ref={this.d6Ref} die="6"></DiceInput>
-            <DiceInput ref={this.d8Ref} die="8"></DiceInput>
-            <DiceInput ref={this.d10Ref} die="10"></DiceInput>
-            <DiceInput ref={this.d12Ref} die="12"></DiceInput>
-            <DiceInput ref={this.d20Ref} die="20"></DiceInput>
-            <Row>
-                <Col><input type="number"
-                    value={this.state.additionalValue}                     
-                    onChange={(e) => {this.setState({additionalValue: e.target.value})}}></input></Col>
-                <Col xs="1"><h6>Additional</h6></Col>
-            </Row>
-            <Row>
-                <Col><input type="text"
-                    value={this.state.additionalValue}                     
-                    onChange={(e) => {this.setState({additionalValue: e.target.value})}}></input></Col>
-                <Col xs="2"><h6>Reroll Values (Comma seperated)</h6></Col>
-            </Row>
             <Row>
                 <Col>
-                    <FontAwesomeIcon size='2xl' className='blue' icon={faLocationArrow} onClick={this.roll}></FontAwesomeIcon>
-                </Col>
+                    <DiceInput ref={this.d4Ref} die="4"></DiceInput>
+                    <DiceInput ref={this.d6Ref} die="6"></DiceInput>
+                    <DiceInput ref={this.d8Ref} die="8"></DiceInput>
+                    <DiceInput ref={this.d10Ref} die="10"></DiceInput>
+                    <DiceInput ref={this.d12Ref} die="12"></DiceInput>
+                    <DiceInput ref={this.d20Ref} die="20"></DiceInput>
+                    <Row>
+                        <Col><input type="number"
+                            value={this.state.additionalValue}                     
+                            onChange={(e) => {this.setState({additionalValue: e.target.value})}}></input></Col>
+                        <Col xs="1"><h6>Additional</h6></Col>
+                    </Row>
+                    <Row>
+                        <Col><input type="text"
+                            value={this.state.rerollValues}                     
+                            onChange={(e) => {this.setState({rerollValues: e.target.value})}}></input></Col>
+                        <Col xs="2"><h6>Reroll Values (Comma seperated)</h6></Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Button onClick={this.roll}>Roll</Button>                            
+                        </Col>
+                        <Col>
+                            <Button variant="warning" onClick={this.clearValues}>Clear Values</Button>                            
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <input type="text"
+                            value={this.state.name}                     
+                            onChange={(e) => {this.setState({name: e.target.value})}}></input>
+                        </Col>
+                        <Col>
+                            <Button variant="secondary" onClick={this.save}>Save</Button>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <DiceHistory ref={this.diceHistory}></DiceHistory>
+                        </Col>
+                    </Row>
+                </Col>                
                 <Col>
-                    <FontAwesomeIcon size='2xl' className='blue' icon={faBroom} onClick={this.clearValues}></FontAwesomeIcon>
+                    <DicePools ref={this.dicePools} loadPool={this.loadPool}></DicePools>
                 </Col>
-            </Row>
+            </Row>            
         </Container>
     }
 
@@ -85,10 +114,12 @@ export default class DiceRoller extends Component {
         if (additionalValue != 0) {
             data.total += additionalValue;
             data.log += `+${additionalValue}`;
-        }            
+        }          
+        
+        data.log = `${data.total}=${data.log}`;
 
-        console.log(`Total: ${data.total}`);
-        console.log(data.log);
+        this.diceHistory.current.add(data.log);
+        toast(data.total);
     }
 
     clearValues() {
@@ -98,6 +129,10 @@ export default class DiceRoller extends Component {
         this.d10Ref.current.clear();
         this.d12Ref.current.clear();
         this.d20Ref.current.clear();
+        this.setState({
+            additionalValue: 0,
+            rerollValues: ""
+        });
     }
 
     adjustValues(roll, data) {
@@ -106,6 +141,37 @@ export default class DiceRoller extends Component {
         data.total += roll.total;
         data.log += data.appender + roll.log;
         data.appender = ", ";
+    }
+
+    save() {
+        let dicePool = {
+            d4Dice : this.d4Ref.current.getValue(),
+            d6Dice : this.d6Ref.current.getValue(),
+            d8Dice : this.d8Ref.current.getValue(),
+            d10Dice : this.d10Ref.current.getValue(),
+            d12Dice : this.d12Ref.current.getValue(),
+            d20Dice : this.d20Ref.current.getValue(),
+            additionalValue : this.state.additionalValue,
+            rerollValues : this.state.rerollValues
+        }
+
+        this.dicePools.current.addDicePool(this.state.name, dicePool);
+
+        this.setState({name: ""});
+        toast("Saved!");
+    }
+
+    loadPool(diePool) {
+        this.d4Ref.current.setValue(diePool.d4Dice);
+        this.d6Ref.current.setValue(diePool.d6Dice);            
+        this.d8Ref.current.setValue(diePool.d8Dice);
+        this.d10Ref.current.setValue(diePool.d10Dice);            
+        this.d12Ref.current.setValue(diePool.d12Dice);            
+        this.d20Ref.current.setValue(diePool.d20Dice);            
+        this.setState({
+            additionalValue: diePool.additionalValue,
+            rerollValues: diePool.rerollValues
+        });
     }
 
 }
