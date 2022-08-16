@@ -46,16 +46,18 @@ export default class DiceRoller extends Component {
                     <DiceInput ref={this.d12Ref} die="12"></DiceInput>
                     <DiceInput ref={this.d20Ref} die="20"></DiceInput>
                     <Row>
-                        <Col><input type="number"
+                        <Col xs="5"><input type="number"
                             value={this.state.additionalValue}                     
                             onChange={(e) => {this.setState({additionalValue: e.target.value})}}></input></Col>
                         <Col xs="1"><h6>Additional</h6></Col>
+                        <Col xs="6"></Col>
                     </Row>
                     <Row>
-                        <Col><input type="text"
+                        <Col xs="5"><input type="text"
                             value={this.state.rerollValues}                     
                             onChange={(e) => {this.setState({rerollValues: e.target.value})}}></input></Col>
                         <Col xs="2"><h6>Reroll Values (Comma seperated)</h6></Col>
+                        <Col xs="5"></Col>
                     </Row>
                     <Row>
                         <Col>
@@ -68,7 +70,8 @@ export default class DiceRoller extends Component {
                     <Row>
                         <Col>
                             <input type="text"
-                            value={this.state.name}                     
+                            value={this.state.name}  
+                            placeholder="Dice Pool Name"                   
                             onChange={(e) => {this.setState({name: e.target.value})}}></input>
                         </Col>
                         <Col>

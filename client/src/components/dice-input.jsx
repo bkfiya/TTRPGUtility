@@ -19,10 +19,11 @@ export default class DiceInput extends Component {
 
     render() {
         return <Row>
-            <Col><input type="text"
+            <Col xs="5"><input type="text"
                 value={this.state.numDice}                     
                 onChange={(e) => {this.setState({numDice: e.target.value})}}></input></Col>
             <Col xs="1"><h6>{this.dieText}</h6></Col>
+            <Col xs="6"></Col>
         </Row>
     }
 

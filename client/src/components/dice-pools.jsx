@@ -31,6 +31,9 @@ export default class DicePools extends Component {
         });
 
         return <div>
+            <Row>
+                <Col><h5>Saved Dice Pools</h5></Col>
+            </Row>
             {mappedPools}
         </div>
     }
